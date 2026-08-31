@@ -38,33 +38,25 @@ function syncViewCount(total) {
 }
 
 async function fetchLiveViewCount() {
-  const attempts = [
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ source: 'site' })
-    },
-    { method: 'GET' }
-  ];
+  try {
+    const response = await fetch(VIEW_API_URL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
 
-  for (const options of attempts) {
-    try {
-      const response = await fetch(VIEW_API_URL, {
-        ...options,
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        continue;
-      }
-
-      const data = await response.json();
-      if (typeof data?.total === 'number') {
-        return data.total;
-      }
-    } catch (error) {
-      console.warn('Live view API request failed:', error);
+    if (!response.ok) {
+      console.warn(`View API returned ${response.status}`);
+      return DEFAULT_TOTAL_VIEWS;
     }
+
+    const data = await response.json();
+    if (typeof data?.total === 'number') {
+      console.log('View count updated:', data.total);
+      return data.total;
+    }
+  } catch (error) {
+    console.warn('Live view API request failed:', error.message);
   }
 
   return DEFAULT_TOTAL_VIEWS;
