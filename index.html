@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D4an | Socials</title>
+    <meta
+      name="description"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@500;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="splash-screen" class="splash-screen">
+      <div class="splash-content">
+        <p class="splash-text">click here</p>
+      </div>
+    </div>
+
+    <div class="page-shell" style="display: none;">
+      <div class="background-glow glow-left"></div>
+      <div class="background-glow glow-right"></div>
+
+      <main class="profile-panel" aria-label="Social profile panel">
+        <div class="profile-header">
+          <div class="avatar-cluster">
+            <div class="avatar-ring"></div>
+            <img
+              class="avatar"
+              src="Icons/ProfilePicture.jpg"
+              alt="Profile avatar"
+            />
+          </div>
+
+          <div class="profile-copy">
+            <div class="name-row">
+              <h1>D4an</h1>
+              <span class="verified">✓</span>
+            </div>
+            <div class="tagline">@d4anw</div>
+            <div class="join-line">Created on 31/08/2026</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div class="mini-panel mini-left">
+            <div class="mini-avatar">
+              <img
+                src="Icons/ProfilePicture.jpg"
+                alt="mini avatar"
+              />
+            </div>
+            <div class="mini-copy">
+              <div class="mini-name">D4an</div>
+              <div class="mini-sub">online now</div>
+            </div>
+          </div>
+
+          <div class="mini-panel mini-right">
+            <div class="mini-avatar server-avatar">
+              <span>🦅</span>
+            </div>
+            <div class="mini-copy">
+              <div class="mini-name">d4an.lol</div>
+              <div class="mini-sub">
+                <span class="green-dot"></span>
+                socials • creator • tech
+              </div>
+            </div>
+            <button class="join-btn">Follow</button>
+          </div>
+        </div>
+
+        <nav class="social-list" aria-label="Social media links">
+          <a href="https://x.com/wd4an" target="_blank" rel="noreferrer" class="social-button x" aria-label="X">
+            <span class="icon">
+              <img src="https://cdn.simpleicons.org/x/white" alt="X icon" />
+            </span>
+          </a>
+
+          <a href="https://www.tiktok.com/@d4anw" target="_blank" rel="noreferrer" class="social-button tiktok" aria-label="TikTok">
+            <span class="icon">
+              <img src="https://cdn.simpleicons.org/tiktok/white" alt="TikTok icon" />
+            </span>
+          </a>
+
+          <a href="https://www.youtube.com/@d4anw" target="_blank" rel="noreferrer" class="social-button youtube" aria-label="YouTube">
+            <span class="icon">
+              <img src="https://cdn.simpleicons.org/youtube/white" alt="YouTube icon" />
+            </span>
+          </a>
+
+          <a href="https://open.spotify.com/user/jkl9tdm21krp8u8gmdcy1f0z6?si=356abb00b07748b7" target="_blank" rel="noreferrer" class="social-button spotify" aria-label="Spotify">
+            <span class="icon">
+              <img src="https://cdn.simpleicons.org/spotify/white" alt="Spotify icon" />
+            </span>
+          </a>
+
+          <a href="https://www.twitch.tv/d4anw" target="_blank" rel="noreferrer" class="social-button twitch" aria-label="Twitch">
+            <span class="icon">
+              <img src="https://cdn.simpleicons.org/twitch/white" alt="Twitch icon" />
+            </span>
+          </a>
+
+          <a href="https://github.com/d4anw" target="_blank" rel="noreferrer" class="social-button github" aria-label="GitHub">
+            <span class="icon">
+              <img src="https://cdn.simpleicons.org/github/white" alt="GitHub icon" />
+            </span>
+          </a>
+        </nav>
+
+        <div class="followers" aria-label="page views">
+          <span class="followers-eye" aria-hidden="true">👁</span>
+          <span id="view-count">54,226</span>
+        </div>
+
+        <audio id="audio-player" src="Song/ByeBye.mp3" loop></audio>
+
+        <div class="player-box" aria-label="currently playing song">
+          <div class="track-art">
+            <img
+              src="Song/ByeByeCover.png"
+              alt="album art"
+            />
+          </div>
+
+          <div class="track-meta">
+            <div class="track-title">Bye Bye . - fakemink</div>
+            <div class="track-progress-row">
+              <span class="time current">0:00</span>
+              <div class="progress-bar"><span class="progress-fill"></span></div>
+              <span class="time total">0:00</span>
+            </div>
+          </div>
+
+          <div class="track-controls" aria-label="media controls">
+            <button id="prev-btn" aria-label="previous">⏮</button>
+            <button id="play-btn" aria-label="pause">⏸</button>
+            <button id="next-btn" aria-label="next">⏭</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
