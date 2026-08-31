@@ -34,7 +34,7 @@ function formatNumber(value) {
 function syncViewCount(total) {
   if (viewCountEl) {
     viewCountEl.textContent = formatNumber(total);
-    viewCountEl.style.opacity = '1';  // Make visible when loaded
+    viewCountEl.style.visibility = 'visible';
   }
 }
 
@@ -75,9 +75,8 @@ async function updateViewCount() {
   }
 }
 
-if (viewCountEl) {
-  updateViewCount();
-}
+// START LOADING IMMEDIATELY (don't wait for splash click)
+updateViewCount();
 
 if (panel) {
   window.addEventListener('pointermove', (event) => {
