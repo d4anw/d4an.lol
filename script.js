@@ -183,9 +183,9 @@ function formatTime(seconds) {
 const TRACKS = [
   { title: 'Bye Bye . - fakemink', src: 'Song/ByeBye.mp3', cover: 'Song/ByeByeCover.png' },
   { title: '2023 Summer - Feng', src: 'Song/2023Summer.mp3', cover: 'Song/2023SummerCover.jpg' },
-  { title: 'Bye Bye . - fakemink', src: 'Song/ByeBye.mp3', cover: 'Song/ByeByeCover.png' },
-  { title: '2023 Summer - Feng', src: 'Song/2023Summer.mp3', cover: 'Song/2023SummerCover.jpg' },
-  { title: 'Bye Bye . - fakemink', src: 'Song/ByeBye.mp3', cover: 'Song/ByeByeCover.png' }
+  { title: 'StruggleGang - xaviersobased', src: 'Song/StruggleGang.mp3', cover: 'Song/StruggleGangCover.jpg' },
+  { title: 'Shampoodle - fakemink', src: 'Song/Shampoodle.mp3', cover: 'Song/ShampoodleCover.jpg' },
+  { title: 'F*CK CANCER', src: 'Song/FCKCANCER.mp3', cover: 'Song/FCKCANCERCover.jpg' }
 ];
 
 let currentTrackIndex = 0;
@@ -252,8 +252,8 @@ function loadTrack(index, autoplay) {
 
 // Audio player controls
 if (audio && playBtn) {
-  // Set volume to 30%
-  audio.volume = 0.3;
+  // Set volume to 10%
+  audio.volume = 0.05;
 
   renderPlaylist();
 
