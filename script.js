@@ -1,3 +1,34 @@
+// Create falling stars background
+function createStars() {
+  const pageShell = document.querySelector('.page-shell');
+  const starsContainer = document.createElement('div');
+  starsContainer.className = 'stars-container';
+  pageShell.prepend(starsContainer);
+
+  function createStar() {
+    const star = document.createElement('div');
+    star.className = 'falling-star';
+    
+    const size = Math.random() * 2.5 + 0.8;
+    const left = Math.random() * 100;
+    const duration = Math.random() * 3 + 2.5;
+    const delay = Math.random() * 3;
+    const opacity = Math.random() * 0.8 + 0.4;
+    
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = left + '%';
+    star.style.animation = `starFall ${duration}s linear ${delay}s infinite`;
+    star.style.opacity = opacity;
+    
+    starsContainer.appendChild(star);
+  }
+
+  for (let i = 0; i < 300; i++) {
+    createStar();
+  }
+}
+
 // Splash screen handler
 const splashScreen = document.getElementById('splash-screen');
 const pageShell = document.querySelector('.page-shell');
@@ -6,6 +37,7 @@ if (splashScreen && pageShell) {
   splashScreen.addEventListener('click', () => {
     splashScreen.classList.add('hidden');
     pageShell.style.display = 'grid';
+    createStars();
     requestAnimationFrame(() => {
       pageShell.classList.add('visible');
     });
@@ -23,8 +55,10 @@ const progressFill = document.querySelector('.progress-fill');
 const currentTimeEl = document.querySelector('.time.current');
 const totalTimeEl = document.querySelector('.time.total');
 const viewCountEl = document.getElementById('view-count');
+const discordStatusEl = document.getElementById('discord-status');
 
 const VIEW_API_URL = 'https://d4an-lol.onrender.com/api/view';
+const DISCORD_API_URL = 'https://d4an-lol.onrender.com/api/discord-status';
 const DEFAULT_TOTAL_VIEWS = 54226;
 
 function formatNumber(value) {
@@ -74,8 +108,57 @@ async function updateViewCount() {
   }
 }
 
+// Discord Status
+function getTimeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  
+  if (seconds < 60) return 'online now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+  return `${Math.floor(seconds / 604800)}w ago`;
+}
+
+async function fetchDiscordStatus() {
+  try {
+    const response = await fetch(DISCORD_API_URL, {
+      method: 'GET',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+      console.warn(`Discord API returned ${response.status}`);
+      if (discordStatusEl) discordStatusEl.textContent = 'Last online: unknown';
+      return;
+    }
+
+    const data = await response.json();
+    if (data.last_online) {
+      const lastOnline = new Date(data.last_online);
+      const timeAgo = getTimeAgo(lastOnline);
+      if (discordStatusEl) {
+        discordStatusEl.textContent = `Last online: ${timeAgo}`;
+      }
+    } else if (data.status === 'online') {
+      if (discordStatusEl) discordStatusEl.textContent = 'online now';
+    }
+  } catch (error) {
+    console.warn('Discord status fetch failed:', error.message);
+    if (discordStatusEl) discordStatusEl.textContent = 'Last online: unknown';
+  }
+}
+
+async function updateDiscordStatus() {
+  await fetchDiscordStatus();
+}
+
 // START LOADING IMMEDIATELY (don't wait for splash click)
 updateViewCount();
+updateDiscordStatus();
+
+// Refresh Discord status every 30 seconds
+setInterval(updateDiscordStatus, 30000);
 
 if (panel) {
   window.addEventListener('pointermove', (event) => {
