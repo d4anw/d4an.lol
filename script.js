@@ -34,7 +34,7 @@ function formatNumber(value) {
 function syncViewCount(total) {
   if (viewCountEl) {
     viewCountEl.textContent = formatNumber(total);
-    viewCountEl.style.opacity = '1';
+    viewCountEl.style.opacity = '1';  // Make visible when loaded
   }
 }
 
