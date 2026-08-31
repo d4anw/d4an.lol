@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <img id="custom-cursor" src="Icons/cursor.png" alt="" />
+
     <div id="splash-screen" class="splash-screen">
       <div class="splash-content">
         <p class="splash-text">click here</p>
@@ -50,10 +52,10 @@
 
         <div class="info-row">
           <div class="mini-panel mini-left">
-            <div class="mini-avatar">
+            <div class="mini-avatar icon-avatar">
               <img
-                src="Icons/ProfilePicture.jpg"
-                alt="mini avatar"
+                src="Icons/Discord.png"
+                alt="Discord"
               />
             </div>
             <div class="mini-copy">
@@ -63,17 +65,16 @@
           </div>
 
           <div class="mini-panel mini-right">
-            <div class="mini-avatar server-avatar">
-              <span>🦅</span>
+            <div class="mini-avatar icon-avatar">
+              <img
+                src="Icons/Clock.png"
+                alt="Clock"
+              />
             </div>
             <div class="mini-copy">
-              <div class="mini-name">d4an.lol</div>
-              <div class="mini-sub">
-                <span class="green-dot"></span>
-                socials • creator • tech
-              </div>
+              <div class="mini-name">Netherlands</div>
+              <div class="mini-sub" id="nl-time">Loading...</div>
             </div>
-            <button class="join-btn">Follow</button>
           </div>
         </div>
 
@@ -115,34 +116,43 @@
           </a>
         </nav>
 
-        <div class="followers" aria-label="page views">
-          <span class="followers-eye" aria-hidden="true">👁</span>
-          <span id="view-count">Loading</span>
-        </div>
-
-        <audio id="audio-player" src="Song/ByeBye.mp3" loop></audio>
+        <audio id="audio-player" src="Song/ByeBye.mp3"></audio>
 
         <div class="player-box" aria-label="currently playing song">
-          <div class="track-art">
-            <img
-              src="Song/ByeByeCover.png"
-              alt="album art"
-            />
-          </div>
+          <div class="player-inner" id="player-inner">
+            <div class="player-face player-front">
+              <div class="track-art">
+                <img
+                  id="track-art-img"
+                  src="Song/ByeByeCover.png"
+                  alt="album art"
+                />
+              </div>
 
-          <div class="track-meta">
-            <div class="track-title">Bye Bye . - fakemink</div>
-            <div class="track-progress-row">
-              <span class="time current">0:00</span>
-              <div class="progress-bar"><span class="progress-fill"></span></div>
-              <span class="time total">0:00</span>
+              <div class="track-meta">
+                <div class="track-title" id="track-title">Bye Bye . - fakemink</div>
+                <div class="track-progress-row">
+                  <span class="time current">0:00</span>
+                  <div class="progress-bar"><span class="progress-fill"></span></div>
+                  <span class="time total">0:00</span>
+                </div>
+              </div>
+
+              <div class="track-controls" aria-label="media controls">
+                <button id="prev-btn" aria-label="previous">⏮</button>
+                <button id="play-btn" aria-label="pause">⏸</button>
+                <button id="next-btn" aria-label="next">⏭</button>
+                <button id="playlist-btn" aria-label="show playlist">☰</button>
+              </div>
             </div>
-          </div>
 
-          <div class="track-controls" aria-label="media controls">
-            <button id="prev-btn" aria-label="previous">⏮</button>
-            <button id="play-btn" aria-label="pause">⏸</button>
-            <button id="next-btn" aria-label="next">⏭</button>
+            <div class="player-face player-back">
+              <div class="playlist-header">
+                <span>Playlist</span>
+                <button id="playlist-back-btn" aria-label="back to player">↩</button>
+              </div>
+              <ul class="playlist-list" id="playlist-list"></ul>
+            </div>
           </div>
         </div>
       </main>

@@ -54,98 +54,47 @@ const playBtn = document.getElementById('play-btn');
 const progressFill = document.querySelector('.progress-fill');
 const currentTimeEl = document.querySelector('.time.current');
 const totalTimeEl = document.querySelector('.time.total');
-const viewCountEl = document.getElementById('view-count');
 const discordStatusEl = document.getElementById('discord-status');
+const nlTimeEl = document.getElementById('nl-time');
 
-const VIEW_API_URL = 'https://d4an-lol.onrender.com/api/view';
-const DISCORD_API_URL = 'https://d4an-lol.onrender.com/api/discord-status';
-const DEFAULT_TOTAL_VIEWS = 54226;
+const LANYARD_API_URL = 'https://api.lanyard.rest/v1/users/545564157026631701';
 
-function formatNumber(value) {
-  return new Intl.NumberFormat('en-US').format(value);
-}
-
-function syncViewCount(total) {
-  if (viewCountEl) {
-    viewCountEl.textContent = formatNumber(total);
-  }
-}
-
-async function fetchLiveViewCount() {
-  try {
-    const response = await fetch(VIEW_API_URL, {
-      method: 'GET',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    if (!response.ok) {
-      console.warn(`View API returned ${response.status}`);
-      return DEFAULT_TOTAL_VIEWS;
-    }
-
-    const data = await response.json();
-    if (typeof data?.total === 'number') {
-      console.log('View count updated:', data.total);
-      return data.total;
-    }
-  } catch (error) {
-    console.warn('Live view API request failed:', error.message);
-  }
-
-  return DEFAULT_TOTAL_VIEWS;
-}
-
-async function updateViewCount() {
-  if (!viewCountEl) return;
-
-  try {
-    const total = await fetchLiveViewCount();
-    syncViewCount(total);
-  } catch (error) {
-    console.warn('View tracking unavailable:', error);
-    syncViewCount(DEFAULT_TOTAL_VIEWS);
-  }
-}
+const DISCORD_STATUS_LABELS = {
+  online: 'Online',
+  idle: 'Idle',
+  dnd: 'Do Not Disturb',
+  offline: 'Offline'
+};
 
 // Discord Status
-function getTimeAgo(date) {
-  const seconds = Math.floor((new Date() - date) / 1000);
-  
-  if (seconds < 60) return 'online now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
-  return `${Math.floor(seconds / 604800)}w ago`;
+function setDiscordStatus(status) {
+  if (!discordStatusEl) return;
+  const knownStatus = DISCORD_STATUS_LABELS[status] ? status : 'offline';
+
+  discordStatusEl.textContent = '';
+  const dot = document.createElement('span');
+  dot.className = `status-dot status-${knownStatus}`;
+  discordStatusEl.appendChild(dot);
+  discordStatusEl.appendChild(document.createTextNode(DISCORD_STATUS_LABELS[knownStatus]));
 }
 
 async function fetchDiscordStatus() {
   try {
-    const response = await fetch(DISCORD_API_URL, {
-      method: 'GET',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' }
-    });
+    const response = await fetch(LANYARD_API_URL);
 
     if (!response.ok) {
-      console.warn(`Discord API returned ${response.status}`);
-      if (discordStatusEl) discordStatusEl.textContent = 'Last online: unknown';
+      console.warn(`Lanyard API returned ${response.status}`);
+      setDiscordStatus('offline');
       return;
     }
 
-    const data = await response.json();
-    if (data.last_online) {
-      const lastOnline = new Date(data.last_online);
-      const timeAgo = getTimeAgo(lastOnline);
-      if (discordStatusEl) {
-        discordStatusEl.textContent = `Last online: ${timeAgo}`;
-      }
-    } else if (data.status === 'online') {
-      if (discordStatusEl) discordStatusEl.textContent = 'online now';
-    }
+    const { success, data } = await response.json();
+    if (!success) throw new Error('Lanyard API returned success: false');
+
+    setDiscordStatus(data.discord_status);
   } catch (error) {
     console.warn('Discord status fetch failed:', error.message);
-    if (discordStatusEl) discordStatusEl.textContent = 'Last online: unknown';
+    setDiscordStatus('offline');
   }
 }
 
@@ -153,14 +102,36 @@ async function updateDiscordStatus() {
   await fetchDiscordStatus();
 }
 
+// Netherlands local time
+function updateNlTime() {
+  if (!nlTimeEl) return;
+
+  const now = new Date();
+  const date = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Amsterdam',
+    day: '2-digit',
+    month: 'short'
+  }).format(now);
+  const time = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Amsterdam',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(now);
+
+  nlTimeEl.textContent = `${time} · ${date}`;
+}
+
 // START LOADING IMMEDIATELY (don't wait for splash click)
-updateViewCount();
 updateDiscordStatus();
+updateNlTime();
 
 // Refresh Discord status every 30 seconds
 setInterval(updateDiscordStatus, 30000);
 
-if (panel) {
+// Refresh NL time every second
+setInterval(updateNlTime, 1000);
+
+if (panel && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   window.addEventListener('pointermove', (event) => {
     const { innerWidth, innerHeight } = window;
     
@@ -186,6 +157,20 @@ if (panel) {
   });
 }
 
+// Custom cursor
+const customCursor = document.getElementById('custom-cursor');
+if (customCursor) {
+  window.addEventListener('pointermove', (event) => {
+    customCursor.style.left = `${event.clientX}px`;
+    customCursor.style.top = `${event.clientY}px`;
+    customCursor.classList.add('visible');
+  });
+
+  window.addEventListener('pointerleave', () => {
+    customCursor.classList.remove('visible');
+  });
+}
+
 // Format time helper
 function formatTime(seconds) {
   if (isNaN(seconds)) return '0:00';
@@ -194,13 +179,83 @@ function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+// Playlist
+const TRACKS = [
+  { title: 'Bye Bye . - fakemink', src: 'Song/ByeBye.mp3', cover: 'Song/ByeByeCover.png' },
+  { title: '2023 Summer - Feng', src: 'Song/2023Summer.mp3', cover: 'Song/2023SummerCover.jpg' },
+  { title: 'Bye Bye . - fakemink', src: 'Song/ByeBye.mp3', cover: 'Song/ByeByeCover.png' },
+  { title: '2023 Summer - Feng', src: 'Song/2023Summer.mp3', cover: 'Song/2023SummerCover.jpg' },
+  { title: 'Bye Bye . - fakemink', src: 'Song/ByeBye.mp3', cover: 'Song/ByeByeCover.png' }
+];
+
+let currentTrackIndex = 0;
+
+const trackArtImg = document.getElementById('track-art-img');
+const trackTitleEl = document.getElementById('track-title');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const playlistBtn = document.getElementById('playlist-btn');
+const playlistBackBtn = document.getElementById('playlist-back-btn');
+const playlistListEl = document.getElementById('playlist-list');
+const playerInner = document.getElementById('player-inner');
+
+function renderPlaylist() {
+  if (!playlistListEl) return;
+
+  playlistListEl.textContent = '';
+  TRACKS.forEach((track, index) => {
+    const li = document.createElement('li');
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'playlist-item' + (index === currentTrackIndex ? ' active' : '');
+
+    const thumb = document.createElement('img');
+    thumb.src = track.cover;
+    thumb.alt = '';
+
+    const label = document.createElement('span');
+    label.textContent = track.title;
+
+    item.appendChild(thumb);
+    item.appendChild(label);
+    item.addEventListener('click', () => {
+      loadTrack(index, true);
+      if (playerInner) playerInner.classList.remove('flipped');
+    });
+
+    li.appendChild(item);
+    playlistListEl.appendChild(li);
+  });
+}
+
+function loadTrack(index, autoplay) {
+  if (!audio || TRACKS.length === 0) return;
+
+  currentTrackIndex = (index + TRACKS.length) % TRACKS.length;
+  const track = TRACKS[currentTrackIndex];
+
+  audio.src = track.src;
+  if (trackArtImg) trackArtImg.src = track.cover;
+  if (trackTitleEl) trackTitleEl.textContent = track.title;
+  if (progressFill) progressFill.style.width = '0%';
+  if (currentTimeEl) currentTimeEl.textContent = '0:00';
+
+  renderPlaylist();
+
+  if (autoplay) {
+    audio.play();
+    if (playBtn) playBtn.textContent = '⏸';
+  } else if (playBtn) {
+    playBtn.textContent = audio.paused ? '▶' : '⏸';
+  }
+}
+
 // Audio player controls
 if (audio && playBtn) {
   // Set volume to 30%
   audio.volume = 0.3;
-  
-  // Reset audio to start
-  audio.currentTime = 0;
+
+  renderPlaylist();
 
   playBtn.addEventListener('click', () => {
     if (audio.paused) {
@@ -210,6 +265,23 @@ if (audio && playBtn) {
       audio.pause();
       playBtn.textContent = '▶';
     }
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      loadTrack(currentTrackIndex - 1, true);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      loadTrack(currentTrackIndex + 1, true);
+    });
+  }
+
+  // Auto-advance to the next track, wrapping around at the end
+  audio.addEventListener('ended', () => {
+    loadTrack(currentTrackIndex + 1, true);
   });
 
   audio.addEventListener('timeupdate', () => {
@@ -241,4 +313,15 @@ if (audio && playBtn) {
       audio.currentTime = percent * audio.duration;
     });
   }
+}
+
+// Playlist flip
+if (playerInner && playlistBtn && playlistBackBtn) {
+  playlistBtn.addEventListener('click', () => {
+    playerInner.classList.add('flipped');
+  });
+
+  playlistBackBtn.addEventListener('click', () => {
+    playerInner.classList.remove('flipped');
+  });
 }
