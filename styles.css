@@ -148,15 +148,30 @@ button {
   transform: scale(1);
 }
 
-.page-shell::before {
-  content: "";
+/* Falling Stars Container */
+.stars-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.falling-star {
   position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(255,255,255,0.9) 0 1.5px, transparent 1.8px);
-  background-size: 160px 160px;
-  background-position: center;
-  opacity: 0.28;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  top: -10px;
+}
+
+@keyframes starFall {
+  to {
+    transform: translateY(100vh);
+  }
 }
 
 .background-glow {
