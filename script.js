@@ -185,7 +185,7 @@ const TRACKS = [
   { title: '2023 Summer - Feng', src: 'Song/2023Summer.mp3', cover: 'Song/2023SummerCover.jpg' },
   { title: 'StruggleGang - xaviersobased', src: 'Song/StruggleGang.mp3', cover: 'Song/StruggleGangCover.jpg' },
   { title: 'Shampoodle - fakemink', src: 'Song/Shampoodle.mp3', cover: 'Song/ShampoodleCover.jpg' },
-  { title: 'F*CK CANCER', src: 'Song/FCKCANCER.mp3', cover: 'Song/FCKCANCERCover.jpg' }
+  { title: 'F*CK CANCER - Nettspend', src: 'Song/FCKCANCER.mp3', cover: 'Song/FCKCANCERCover.jpg' }
 ];
 
 let currentTrackIndex = 0;
