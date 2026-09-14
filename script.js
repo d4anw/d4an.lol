@@ -56,6 +56,35 @@ const currentTimeEl = document.querySelector('.time.current');
 const totalTimeEl = document.querySelector('.time.total');
 const discordStatusEl = document.getElementById('discord-status');
 const nlTimeEl = document.getElementById('nl-time');
+const avatarTrigger = document.getElementById('avatar-trigger');
+const imageModal = document.getElementById('image-modal');
+const imageModalClose = document.getElementById('image-modal-close');
+const imageModalContent = document.querySelector('.image-modal-content');
+let lastFocusedElement;
+
+function closeImageModal() {
+  if (!imageModal || imageModal.hidden) return;
+
+  imageModal.hidden = true;
+  document.body.style.overflow = '';
+  lastFocusedElement?.focus();
+}
+
+function openImageModal() {
+  if (!imageModal || !avatarTrigger) return;
+
+  lastFocusedElement = document.activeElement;
+  imageModal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  imageModalClose?.focus();
+}
+
+avatarTrigger?.addEventListener('click', openImageModal);
+imageModalClose?.addEventListener('click', closeImageModal);
+imageModal?.querySelector('[data-modal-close]')?.addEventListener('click', closeImageModal);
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeImageModal();
+});
 
 const LANYARD_API_URL = 'https://api.lanyard.rest/v1/users/545564157026631701';
 
@@ -131,7 +160,9 @@ setInterval(updateDiscordStatus, 30000);
 // Refresh NL time every second
 setInterval(updateNlTime, 1000);
 
-if (panel && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+const tiltElements = [panel, imageModalContent].filter(Boolean);
+
+if (tiltElements.length > 0 && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
   window.addEventListener('pointermove', (event) => {
     const { innerWidth, innerHeight } = window;
     
@@ -147,13 +178,17 @@ if (panel && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     const rotateY = xPercent * 15;  // Right = tilt back, Left = tilt forward
     const rotateX = -yPercent * 15; // Down = tilt back, Up = tilt forward
 
-    panel.style.transform = `perspective(1200px) translate3d(${translateX}px, ${translateY}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-    panel.style.transition = 'transform 120ms ease-out';
+    tiltElements.forEach((element) => {
+      element.style.transform = `perspective(1200px) translate3d(${translateX}px, ${translateY}px, 0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      element.style.transition = 'transform 120ms ease-out';
+    });
   });
 
   window.addEventListener('pointerleave', () => {
-    panel.style.transform = 'perspective(1200px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg)';
-    panel.style.transition = 'transform 300ms ease-out';
+    tiltElements.forEach((element) => {
+      element.style.transform = 'perspective(1200px) translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg)';
+      element.style.transition = 'transform 300ms ease-out';
+    });
   });
 }
 
@@ -185,7 +220,8 @@ const TRACKS = [
   { title: '2023 Summer - Feng', src: 'Song/2023Summer.mp3', cover: 'Song/2023SummerCover.jpg' },
   { title: 'StruggleGang - xaviersobased', src: 'Song/StruggleGang.mp3', cover: 'Song/StruggleGangCover.jpg' },
   { title: 'Shampoodle - fakemink', src: 'Song/Shampoodle.mp3', cover: 'Song/ShampoodleCover.jpg' },
-  { title: 'F*CK CANCER - Nettspend', src: 'Song/FCKCANCER.mp3', cover: 'Song/FCKCANCERCover.jpg' }
+  { title: 'F*CK CANCER - Nettspend', src: 'Song/FCKCANCER.mp3', cover: 'Song/FCKCANCERCover.jpg' },
+  { title: 'HATE ME LOVE ME - Nemzzz', src: 'Song/HATEMELOVEME.mp3', cover: 'Song/HATEMELOVEMECover.jpg' }
 ];
 
 let currentTrackIndex = 0;
